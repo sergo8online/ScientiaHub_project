@@ -1,0 +1,46 @@
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private DatabaseHelper dbHelper;
+    private EditText titleEditText, contentEditText;
+    private Button saveButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        dbHelper = new DatabaseHelper(this);
+        titleEditText = findViewById(R.id.titleEditText);
+        contentEditText = findViewById(R.id.contentEditText);
+        saveButton = findViewById(R.id.saveButton);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = titleEditText.getText().toString();
+                String content = contentEditText.getText().toString();
+                String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+
+                if (!title.isEmpty() && !content.isEmpty()) {
+                    Note note = new Note(0, title, content, date);
+                    dbHelper.addNote(note);
+                    Toast.makeText(MainActivity.this, "Note saved!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+}
